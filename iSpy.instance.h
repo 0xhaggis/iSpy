@@ -1,7 +1,7 @@
 #ifndef __ISPY_INSTANCE__
 #define __ISPY_INSTANCE__
 
-typedef std::tr1::unordered_map<unsigned int, unsigned int> InstanceMap_t;
+typedef std::unordered_map<unsigned int, unsigned int> InstanceMap_t;
 
 @interface InstanceTracker : NSObject {
 
@@ -23,8 +23,12 @@ typedef std::tr1::unordered_map<unsigned int, unsigned int> InstanceMap_t;
 @end
 
 // Hooks
-id bf_class_createInstance(Class cls, size_t extraBytes);
-id bf_object_dispose(id obj);
+id bf_alloc(Class cls, SEL selector);
+id bf_dealloc(id obj, SEL selector);
+id bf_NSAllocateObject(Class cls, NSUInteger extraBytes, NSZone *zone);
+id bf_objc_constructInstance(Class cls, void *bytes);
+id bf_objc_destructInstance(id obj);
+//int _isClassFromApp(const char *className);
 
 // Helper functions
 void bf_init_instance_tracker();

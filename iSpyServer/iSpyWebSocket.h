@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 
-#import "CocoaHTTPServer/WebSocket.h"
+#import "CocoaHTTPServer/Core/WebSocket.h"
 
 @interface iSpyWebSocket : WebSocket
 {

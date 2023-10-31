@@ -1,8 +1,16 @@
 #ifndef __ISPY_H__
 #define __ISPY_H__
-#include "objc_type.h"	// taken from the class-dump-z source
+#import <Foundation/Foundation.h>
+#include "3rd-party/objc_type.h"	// taken from the class-dump-z source
 #include <objc/runtime.h>
 #include <objc/message.h>
+
+#define ISPY_DISABLED @0
+#define ISPY_ENABLED @1
+#define ISPY_IS_ENABLED @"ISPY_ENABLED"
+#define ISPY_SSLPINNING_ENABLED @"ISPY_SSLPINNING_ENABLED"
+
+#define ELASTICSEARCH_URL @"http://127.0.0.1:9200/"
 
 // Helper macros
 #define SL_SETUP_HOOK(func, returnType, args...)	static returnType (*orig_##func)(args);returnType sl_##func(args)
@@ -33,6 +41,9 @@
 #define PREFERENCEFILE      "/private/var/mobile/Library/Preferences/com.bishopfox.iSpy.Settings.plist"
 #define APP_PREFERENCEFILE  "/private/var/mobile/Library/Preferences/com.bishopfox.iSpy.Targets.plist"
 
+// Handy macro to write to NSLog and ispy_log in a single call. Pass a C format string like ispy_log("Foo = %s", foo);
+//#define ispy_log(...) { NSLog(@__VA_ARGS__); ispy_log(__VA_ARGS__); }
+
 /* System family socket address */
 struct sockaddr_sys {
 	u_char ss_len; /* sizeof(struct sockaddr_sys) */
@@ -55,33 +66,25 @@ struct ctl_info {
 	char ctl_name[96]; /* Kernel Controller Name (a C string) */
 };
 
-/* iSpy Logging Stuffs */
-static const unsigned int LOG_STRACE   = 0;
-static const unsigned int LOG_MSGSEND  = 1;
-static const unsigned int LOG_GENERAL  = 2;
-static const unsigned int LOG_HTTP     = 3;
-static const unsigned int LOG_TCPIP    = 4;
-static const unsigned int LOG_GLOBAL   = 5;
-static const unsigned int LOG_REPORT   = 6;
-static const unsigned int MAX_LOG      = LOG_REPORT;    // this must be equal to the last number in the list of LOG_* numbers, above.
+struct ProgramVars {
+  struct mach_header*	mh;
+  int*		NXArgcPtr;
+  const char***	NXArgvPtr;
+  const char***	environPtr;
+  const char**	__prognamePtr;
+};
+
 
 EXPORT void ispy_init_logwriter(NSString *documents);
-EXPORT void ispy_log_debug(unsigned int facility, const char *msg, ...);
-EXPORT void ispy_log_info(unsigned int facility, const char *msg, ...);
-EXPORT void ispy_log_warning(unsigned int facility, const char *msg, ...);
-EXPORT void ispy_log_error(unsigned int facility, const char *msg, ...);
-EXPORT void ispy_log_wtf(unsigned int facility, const char *msg, ...);
+EXPORT void ispy_log(const char *msg, ...);
 
 /* Other */
-EXPORT OSStatus new_SecTrustEvaluate(SecTrustRef trust, SecTrustResultType *result);
 EXPORT void bf_hook_msgSend();
 EXPORT void bf_hook_msgSend_stret();
 EXPORT void bf_enable_msgSend_stret();
 EXPORT void bf_disable_msgSend_stret();
-//EXPORT void bf_set_msgSend_log_filename_stret(const char *fname);
 EXPORT void bf_enable_msgSend();
 EXPORT void bf_disable_msgSend();
-//EXPORT void bf_set_msgSend_log_filename(const char *fname);
 EXPORT int bf_get_msgSend_state();
 EXPORT void bf_init_substrate_replacement();
 EXPORT int return_false();
@@ -96,13 +99,18 @@ EXPORT NSDictionary *getNetworkInfo(void);
 EXPORT void update_msgSend_checklists(id *whiteListPtr, id *blackListPtr);
 EXPORT void update_msgSend_checklists_stret(id *whiteListPtr, id *blackListPtr);
 EXPORT void bf_logwrite_msgSend(int facility, const char *msg, ...);
+EXPORT void ispy_log_msgSend(const char *msg);
 EXPORT NSString *base64forData(NSData *theData);
+EXPORT NSArray *get_objc_event_log(long startEvent, long numEventsToRead);
+EXPORT long get_objc_event_log_count();
+EXPORT BOOL customInitialization_preflight();
+EXPORT BOOL customInitialization_postflight();
+EXPORT void start_cycript();
 
-// These funcrions are a hacked-up way of using pure C code to send data down Web Sockets.
+// These functions are a hacked-up way of using pure C code to send data down Web Sockets.
 // This is useful in the obj_msgSend logging code where we cannot use Objective-C.
+// Not implemented in this stripped version of iSpy.
 extern "C" void bf_websocket_write(const char *msg);
-
-// These are implemented in Tweak.xm
 void bf_init_msgSend_logging();
 void bf_enable_msgSend_logging();
 void bf_disable_msgSend_logging();
@@ -118,34 +126,4 @@ struct lr_node {
 	int regs[6];
 };
 
-/*
- UI interaction logging.
-
- If you want to log most interactions with UI elements, enable this.
- It'll dump an entry to NSLog every time you press a button, slide a slider,
- hit "back" or "login" or whatever. You'll get these items in your Xcode console:
-
- class name
- method name
- parameter names and values
- a pointer to the controller receiving the UI event
- a pony
-
- It generates very little logging unless you're going crazy in the UI pressing shit.
-
- NOTE: This isn't complete. Needs more work to encorporate all UI elements.
-
- Enabled by default. Comment out to disable.
- */
-#define LOG_UI_INTERACTION 1
-
-
-@interface xxxLoggingAssertionHandler :NSObject {
-
-}
-@end
-
-
-@interface GCKPB_PBGeneratedMessage : NSObject
-@end
 #endif

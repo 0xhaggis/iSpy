@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    
+    <!-- https://jquery.com/ -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    
+    <!-- http://getbootstrap.com/ -->
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+    
+    <!-- https://fortawesome.github.io/Font-Awesome/ -->
+    <link rel="stylesheet" type="text/css" href="font-awesome/css/font-awesome.min.css"/>
+
+    <!-- https://github.com/flatlogic/awesome-bootstrap-checkbox -->
+    <link rel="stylesheet" type="text/css" href="css/awesome-bootstrap-checkbox.css"/>
+
+    <!-- http://lab.jakiestfu.com/contextjs/ -->
+	<link rel="stylesheet" type="text/css" href="css/context.bootstrap.css"/>
+	<script type="text/javascript" src="js/context.js"></script>
+    
+    <!-- https://datatables.net/ -->
+    <link rel="stylesheet" type="text/css" href="datatables/datatables.min.css"/>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="datatables/datatables.min.js"></script>   	
+
+   	<!-- http://handlebarsjs.com/ -->
+   	<script type="text/javascript" src="js/handlebars-v4.0.2.js"></script>
+
+	<!-- iSpy stuff -->
+	<link rel="stylesheet" type="text/css" href="css/iSpy.css"/>
+	<script type="text/javascript" src="js/keyboard.js"></script>
+	<script type="text/javascript" src="js/select.js"></script>
+	<script type="text/javascript" src="js/class-dumper.js"></script>
+	<script type="text/javascript" src="js/common.js"></script>
+	<script type="text/javascript" src="js/search.js"></script>
+	<script type="text/javascript" src="js/watchlist.js"></script>
+   	<script type="text/javascript" src="js/objc.js"></script>
+   	<script type="text/javascript" src="js/keychain.js"></script>
+   	<script type="text/javascript" src="js/class-browser.js"></script>
+   	<script type="text/javascript" src="js/object-browser.js"></script>
+   	<script type="text/javascript" src="js/dashboard.js"></script>
+   	<script type="text/javascript" src="js/audit.js"></script>
+   	<script type="text/javascript" src="js/audit-callbacks.js"></script>
+
+   	<!-- Josh.js stuff
+	<script type="text/javascript" src="josh.js/shell.js"></script>
+	<script type="text/javascript" src="josh.js/history.js"></script>
+	<script type="text/javascript" src="josh.js/readline.js"></script>
+	<script type="text/javascript" src="josh.js/killring.js"></script>
+	<script type="text/javascript" src="josh.js/input.js"></script>
+	<script type="text/javascript" src="josh.js/pathhandler.js"></script>
+	<script type="text/javascript" src="josh.js/example.js"></script>
+	-->
+</head>
+
+<body>
+	<!--
+		Navigation bar.
+	-->
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container-fluid">
+				<div class="navbar-header">
+					<!--
+						Bishop Fox logo.
+					-->
+					<a class="navbar-brand" href="https://www.bishopfox.com/" target="_new">
+						<img alt="Brand" src="img/bf-shield.svg" height="48" width="48" class="bfBrand" id="BFLogo">
+					</a>
+				</div>
+
+				<!--
+					Tools menu in which the class browser, objc_msgSend browser, keychain editor, etc are made available.
+				-->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<!--<ul class="nav navbar-nav">
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools <span class="caret"></span></a>
+							<ul class="dropdown-menu" data-navbar-menu="tools" id="navbar-menu-tools-items">
+								<li><a href="#" data-panel="panel-objc"><span class="glyphicon glyphicon-list" aria-hidden="true"> </span> Message tracer</a></li>
+								<li><a href="#" data-panel="panel-class"><span class="glyphicon glyphicon-book" aria-hidden="true"> </span> Class browser</a></li>
+								<li><a href="#" data-panel="panel-object"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"> </span> Object browser</a></li>
+								<li><a href="#" data-panel="panel-keychain"><span class="glyphicon glyphicon-lock" aria-hidden="true"> </span> Keychain browser</a></li>
+							</ul>
+						</li>
+					</ul>
+					-->
+					<div class="col-md-7">
+						<form class="navbar-form" role="menu">
+							<div class="btn-group" data-toggle="buttons" id="navbar-panel-buttons">
+								<label class="btn btn-default dark">
+									<input type="radio" name="options" id="btn-panel-info" autocomplete="off"><span class="dark"><i class="fa fa-dashboard"></i></span>
+								</label>
+								<label class="btn btn-default dark">
+									<input type="radio" name="options" id="btn-panel-class" autocomplete="off"><span class="dark"><i class="fa fa-cubes"></i></span>
+								</label>
+								
+								<!-- Everything except the class browser is disabled ATM -->
+								<!--
+								<label class="btn btn-primary dark">
+									<input type="radio" name="options" id="btn-panel-objc" autocomplete="off"><span class="dark"><i class="fa fa-sitemap"></i></span>
+								</label>
+								<label class="btn btn-primary dark">
+									<input type="radio" name="options" id="btn-panel-keychain" autocomplete="off"><span class="dark"><i class="fa fa-key"></i></span>
+								</label>
+								<label class="btn btn-primary dark">
+									<input type="radio" name="options" id="btn-panel-object" autocomplete="off"><span class="dark"><i class="fa fa-cube"></i></span>
+								</label>
+								<label class="btn btn-primary dark">
+									<input type="radio" name="options" id="btn-panel-cycript" autocomplete="off"><span class="dark"><i class="fa fa-terminal"></i></span>
+								</label>
+								<label class="btn btn-primary dark">
+									<input type="radio" name="options" id="btn-panel-log" autocomplete="off"><span class="dark"><i class="fa fa-file-text-o"></i></span>
+								</label>
+								<label class="btn btn-primary dark">
+									<input type="radio" name="options" id="btn-panel-audit" autocomplete="off"><span class="dark"><i class="fa fa-exclamation-triangle"></i></span>
+								</label>
+								-->
+							</div>
+							<div class="btn-group" data-toggle="buttons" id="navbar-panel-buttons2">
+								<label class="btn btn-primary dark">
+									<input type="radio" name="options" id="btn-panel-ipa" autocomplete="off" disabled><span class="dark"><i class="fa fa-cloud-download" id="btnDownloadIpa"></i></span>
+								</label>
+							</div>
+						</form>
+					</div>
+
+					<!--
+						Placeholder for context-specific menus added by individual panels (e.g. Keychain menu, etc)
+					-->
+						
+					<!--
+						Search options.
+						TBD: make this context-specific for each panel to have configurable search options.
+					-->
+					<div class="col-md-4 pull-right">
+						<form class="navbar-form" role="search">
+							<div class="input-group">
+								<div class="input-group-btn" id="searchButtonDiv">
+									<button type="button" class="btn btn-default dark monofont active" data-trigger="hover" data-toggle="popover" id="btnClass">C</button>
+									<button type="button" class="btn btn-default dark monofont" data-trigger="hover" data-toggle="popover" id="btnMethod">M</button>
+									<button type="button" class="btn btn-default dark monofont" data-trigger="hover" data-toggle="popover" id="btnProperty">P</button>
+									<button type="button" class="btn btn-default dark monofont" data-trigger="hover" data-toggle="popover" id="btnIVar">I</button>
+									<button type="button" class="btn btn-default dark monofont" data-trigger="hover" data-toggle="popover" id="btnData">D</button>
+									<button type="button" class="btn btn-default dark monofont" data-trigger="hover" data-toggle="popover" id="btnCaseSensitive">aA</button>
+								</div>
+
+								<!--
+									Input text field for the search control
+								-->
+								<input type="text" class="form-control dark nudge-right" autocomplete="off" placeholder="Regex search" id="searchBox" style="width: 210px !important">
+							</div>
+						</form>
+					</div>
+
+					<form class="navbar-form navbar-right" role="search">
+						<div class="form-group">
+							
+						<!--
+							What is this???
+						-->
+						</div>
+						<!--<button type="submit" class="btn btn-default">Submit</button>-->
+					</form>
+				</div>
+			</div>
+		
+	</nav>
+
+
+	<!-- 
+		Here follows the panels used by the ObjC viewer, the keychain viewer, the class browser, etc 
+	-->
+
+
+	<!--
+		objc_msgSend event viewing panel. Displays a DataTables table in which the user can browse
+		events in real time.
+	-->
+	<div class="container-fluid ispypane hidden" id="panel-objc">
+		<div class="row first-content-row">
+			<div class="col-md-8">
+				<div id="objc-table-wait">
+					<center>
+						<div id="objc-progress-text"></div><br>
+						<div class="progress">
+							<div id="objc-progress-bar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;min-width: 2em;">
+								0%
+							</div>
+						</div><br>
+						<img alt="Brand" src="img/bf-shield.svg" height="200" width="200" class="placeholder-image">
+					</center>
+				</div>
+				<div class="objc-table iSpyToolBox hidden" id="objc-table-outer">
+					<table id="objcTable" class="table table-condensed table-hover" cellspacing="0" >
+					    <thead>
+					        <tr>
+					            <th> </th>
+					            <th>#</th>
+					            <th>Event Data</th>					            
+					        </tr>
+					    </thead>
+					    <tbody>
+					    	
+					    </tbody>
+					</table>	
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="iSpyToolBox" id="callDataSection">
+					<pre>
+						<code id="callDataSectionCode" class="pull-left">
+						<div class="full-height" id="tempPlaceholder"></div>
+						</code>
+					</pre>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- 
+		Class browser panel. TBD.
+	-->
+	<div class="container-fluid ispypane" id="panel-class">
+		<div class="row first-content-row">
+			<div class="col-sm-2 col-md-3">
+				<div class="iSpyToolBox" id="class-dump-outer">
+					<table id="classListTable" class="table table-condensed table-hover hover" cellspacing="0" width="100%">
+					    <thead class="hidden">
+					        <tr>
+					        <th></th><th></th>
+					        </tr>
+					    </thead>
+					    <tbody>
+					    </tbody>
+					</table>	
+				</div>
+			</div>
+			<div class="col-sm-10 col-md-9">
+				<div class="iSpyToolBox" id="classDumpSection">
+					<!-- Mustache template for class details pane -->
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 
+		Info browser panel. TBD.
+	-->
+	<div class="container-fluid ispypane" id="panel-info">
+		<div class="row first-content-row">
+			<div class="col-sm-2 col-md-3">
+				<div class="iSpyToolBox" id="info-outer">
+					<table id="infoListTable" class="table table-condensed table-hover hover" cellspacing="0" width="100%">
+					    <thead class="hidden">
+					        <tr>
+					        <th></th>
+					        </tr>
+					    </thead>
+					    <tbody>
+					    </tbody>
+					</table>	
+				</div>
+			</div>
+			<div class="col-sm-10 col-md-9">
+				<div class="iSpyToolBox" id="infoSection">
+					<!-- Mustache template for class details pane -->
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!--
+		Object/instance browser. TBD.
+	-->
+	<div class="container-fluid ispypane hidden" id="panel-object">
+		<div class="row first-content-row">
+			<div class="col-sm-2 col-md-3">
+				<div class="iSpyToolBox" id="object-classes-outer">
+					<table id="objectListTable" class="table table-condensed table-hover hover" cellspacing="0" width="100%">
+					    <thead class="hidden">
+					        <tr>
+					        <th></th><th></th>
+					        </tr>
+					    </thead>
+					    <tbody>
+					    </tbody>
+					</table>	
+				</div>
+			</div>
+
+			<div class="col-sm-1 col-md-2">
+				<div class="iSpyToolBox" id="object-instances-outer">
+					<table id="objectInstanceListTable" class="table table-condensed table-hover hover" cellspacing="0" width="100%">
+					    <thead class="hidden">
+					        <tr>
+					        <th></th>
+					        </tr>
+					    </thead>
+					    <tbody>
+					    </tbody>
+					</table>	
+				</div>
+			</div>
+
+			<div class="col-sm-9 col-md-7">
+				<div class="iSpyToolBox" id="object-details-outer">
+					<!-- Mustache template for object details pane -->
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!--
+		Cycript terminal. TBD.
+	-->
+	<div class="container-fluid ispypane hidden" id="panel-cycript">
+		<div class="row full-height">
+			<div id="shell-panel">
+				<div id="shell-view">
+				For now, please install Cycript manually and run "cycript -r 127.0.0.1:31338". 
+				Eventually this window will act like a full-blown Cycript terminal.
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!--
+		Logging terminal
+	-->
+	<div class="container-fluid ispypane hidden" id="panel-log">
+		<div class="row full-height first-content-row">
+			<div class="iSpyToolBox" style="overflow-y: hidden !important;">
+				<pre class="terminal-stylee" id="log-window">iSpy Log
+========
+</pre>
+			</div>
+		</div>
+	</div>
+
+
+	<!--
+		Audit event table.
+	-->
+	<div class="container-fluid ispypane hidden" id="panel-audit">
+		<div class="row first-content-row">
+			<div class="col-md-8">
+				<div class="iSpyToolBox" id="audit-table-outer">
+					<table id="auditTable" class="table table-condensed table-hover" cellspacing="0" >
+					    <thead>
+					        <tr>
+					        	<th>EventID</th>
+					            <th>Category</th>
+					            <th>Class</th>
+					            <th>Selector</th>
+					            <th>Description</th>				            
+					        </tr>
+					    </thead>
+					    <tbody>
+					    	
+					    </tbody>
+					</table>	
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="iSpyToolBox" id="auditDataSection">
+					<pre>
+						<code id="auditDataSectionCode" class="pull-left">
+						<div class="full-height" id="tempPlaceholder2"></div>
+						</code>
+					</pre>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<!--
+		Keychain panel for viewing/editing keychain items.
+	-->
+	<div class="container-fluid ispypane hidden" id="panel-keychain">
+		<!-- See "keychainForm" section in templates/mustache-templates.html -->
+	</div>
+
+	<!--
+		Bootstap modal for editing keychain entries
+	-->
+	<div class="modal fade" id="edit-keychain-item">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title text-black">Edit Keychain Item</h4>
+				</div>
+				<div class="modal-body">
+					<form id="edit-keychain-form">
+						<!-- Will be replaced with Mustache template -->
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-primary" id="edit-keychain-save">Save</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+
+	<!--
+		Bootstap modal for a "please wait" spinner
+	-->
+	<div class="modal" id="please-wait">
+		<div class="modal-dialog" id="please-wait-dialog">
+			<div class="modal-content please-wait-modal">
+				<div class="modal-body" id="please-wait-body">
+					<i class="fa fa-circle-o-notch fa-spin fa-5x"></i> <h4>Working...</h4>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+	<!--
+		Bootstap modal for a "please wait" spinner
+	-->
+	<div class="modal" id="settings-outer">
+		<div class="modal-dialog" id="settings-dialog">
+			<div class="modal-content settings-modal">
+				<div class="modal-body" id="settings-body">
+					<h4>Settings</h4>
+					Foo.
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+	<div class="modal modal-wide" id="class-dump-popup-modal">
+		<div class="modal-dialog" id="class-dump-popup-dialog">
+			<div class="modal-content" id="class-dump-popup-content">
+				<div class="modal-body" id="class-dump-popup-body">
+					<div class="iSpyToolBox" id="popupClassDump">
+						<center><img class="placeholder-image" src="img/bf-shield.svg" height="250" width="250"></center>
+					</div>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+	<div class="hidden" id="keyboardSink"></div>
+</body>
+</html>

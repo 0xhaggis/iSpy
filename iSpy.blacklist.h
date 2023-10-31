@@ -1,0 +1,1 @@
+void remove_blacklisted_classes_from_watchlist();

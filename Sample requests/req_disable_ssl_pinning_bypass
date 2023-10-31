@@ -1,0 +1,6 @@
+{
+	"messageType": "bypassSSLPinning",
+	"messageData": {
+			"state":"false"
+	}
+}

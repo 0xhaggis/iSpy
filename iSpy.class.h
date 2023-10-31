@@ -1,12 +1,14 @@
 #ifndef ___ISPY_DEFINED___
-#import "iSpyServer/iSpyHTTPServer.h"
-#import "iSpyServer/shellWebsocket.h"
-#import "iSpyServer/iSpyWebsocket.h"
-#import "iSpy.rpc.h"
-#include "iSpy.msgSend.whitelist.h"
+#include "iSpy.msgSend.watchlist.h"
 #include "iSpy.instance.h"
+#import "iSpyServer/iSpyServer.h"
+#import "iSpyServer/iSpyHTTPServer.h"
+#import "iSpyServer/CycriptWebSocket.h"
+#import "iSpyServer/iSpyWebSocket.h"
+#import "iSpyServer/RPCHandler.h"
+#import "iSpy.SSLPinning.h"
 
-#define MAX_BREAKPOINTS 256
+#define CYCRIPT_PORT 31338
 
 /*
     Adds a nice "containsString" method to NSString
@@ -15,88 +17,78 @@
 {
 
 }
-
 -(BOOL) containsString:(NSString*)substring;
-
 @end
-
-
-
-/*
-	Parent server that controls the HTTP server and RPC server
-    and makes them talk to each other all nice like
-*/
-@interface iSpyServer : NSObject {
-
-}
-
-@property (assign) iSpyHTTPServer *httpServer;
-@property (assign) iSpyWebSocket *iSpyWebSocket;
-@property (assign) NSMutableDictionary *plist;
-@property (assign) RPCHandler *rpcHandler;
--(void) configureWebServer;
--(int) getListenPortFor:(NSString *) key fallbackTo: (int) fallback;
--(NSDictionary *)dispatchRPCRequest:(NSString *) JSONString;
-
-@end
-
 
 /*
 	Functionality that's exposed to Cycript.
 */
 @interface iSpy : NSObject {
 	@public
-		BreakpointMap_t *breakpoints;
+		ClassMap_t *_classWhitelist;
+		bool msgSendLoggingEnabled;
 }
-@property (assign) iSpyServer *webServer;
-@property (assign) NSString *globalStatusStr;
+@property (assign) int cycriptPort;
 @property (assign) char *bundle;
 @property (assign) NSString *bundleId;
-@property (assign) BOOL isInstanceTrackingEnabled;
-@property (assign) NSMutableDictionary *trackedInstances;
+@property (assign) NSString *appPath;
+@property (assign) NSString *docPath;
 @property (assign) NSMutableDictionary *msgSendWhitelist;
-@property (assign) ClassMap_t *classWhitelist;
 @property (assign) InstanceTracker *instanceTracker;
+@property (assign) iSpyServer *webServer;
+@property (assign) iSpyWebSocket *iSpyWebSocket;
+@property (assign) RPCHandler *rpcHandler;
+@property (assign) BOOL isWebSocketLoggingEnabled;
+@property (assign) iSpySSLPinningBypass *SSLPinningBypass;
+@property (assign) NSMutableDictionary *config;
 
-+(iSpy *)sharedInstance;
+//-(void)initialize2;
++(iSpy *)sharedInstance; 
 -(void)initializeAllTheThings;
--(NSDictionary *) getNetworkInfo;
-/*
--(NSString *) instance_dumpAllInstancesWithPointers;
--(NSString *) instance_dumpAppInstancesWithPointers;
--(NSArray *) instance_dumpAppInstancesWithPointersArray;
--(NSDictionary *) instance_dumpAppInstancesWithPointersDict;
--(int) instance_numberOfTrackedInstances;
--(void) instance_searchInstances:(NSString *)forName;
-*/
 -(BOOL) instance_getTrackingState;
 -(void) instance_enableTracking;
 -(void) instance_disableTracking;
--(NSDictionary *)keyChainItems;
--(unsigned int)ASLR;
--(NSDictionary *)infoForMethod:(SEL)selector inClass:(Class)cls;
--(NSDictionary *)infoForMethod:(SEL)selector inClass:(Class)cls isInstanceMethod:(BOOL)isInstance;
--(id)iVarsForClass:(NSString *)className;
--(id)propertiesForClass:(NSString *)className;
--(id)methodsForClass:(NSString *)className;
--(NSArray *)methodListForClass:(NSString *)className;
--(id)classes;
--(id)classesWithSuperClassAndProtocolInfo;
--(id)protocolsForClass:(NSString *)className;
--(id)propertiesForProtocol:(Protocol *)protocol;
--(id)methodsForProtocol:(Protocol *)protocol;
--(NSDictionary *)protocolDump;
--(NSDictionary *)classDump;
--(NSDictionary *)classDumpClass:(NSString *)className;
+-(NSDictionary *) getNetworkInfo;
+-(NSDictionary *) keyChainItems;
+-(NSDictionary *) updateKeychain:(NSString *)chain forService:(NSString *)service withData:(NSData *)data;
+-(NSDictionary *) infoForMethod:(SEL)selector inClass:(Class)cls;
+-(NSDictionary *) infoForMethod:(SEL)selector inClass:(Class)cls isInstanceMethod:(BOOL)isInstance;
+-(NSArray *) iVarsForClass:(NSString *)className;
+-(NSArray *) propertiesForClass:(NSString *)className;
+-(NSArray *) methodsForClass:(NSString *)className;
+-(NSArray *) protocolsForClass:(NSString *)className;
+-(unsigned int)countMethodsForClass:(const char *)className ;
+-(NSArray *) classes;
+-(NSArray *) classesWithSuperClassAndProtocolInfo;
+-(NSArray *) propertiesForProtocol:(Protocol *)protocol;
+-(NSArray *) methodsForProtocol:(Protocol *)protocol;
+-(NSArray *) iVarListForClass:(NSString *)className;
+-(NSArray *) propertyListForClass:(NSString *)className;
+-(NSArray *) protocolListForClass:(NSString *)className;
+-(NSArray *) methodListForClass:(NSString *)className;
+-(NSDictionary *) classDumpClassFull:(NSString *)className;
+-(NSDictionary *) protocolDump;
+-(NSDictionary *) classDump;
+-(NSDictionary *) classDumpClass:(NSString *)className;
+-(NSString *) msgSend_watchlistAddClass:(NSString *) className;
+-(NSString *) msgSend_watchlistAddMethod:(NSString *)methodName forClass:(NSString *)className;
+-(NSString *) _msgSend_watchlistAddMethod:(NSString *)methodName forClass:(NSString *)className ofType:(struct interestingCall *)call;
+-(NSString *) msgSend_addAppClassesToWhitelist;
+-(NSString *) msgSend_watchlistRemoveClass:(NSString *)className;
+-(NSString *) msgSend_watchlistRemoveMethod:(NSString *)methodName fromClass:(NSString *)className;
+-(NSString *) msgSend_clearWhitelist;
+-(void) tellBrowserToRefreshWhitelist;
++(BOOL) isClassFromApp:(NSString *)className;
+-(ClassMap_t *) classWhitelist;
+-(unsigned int) ASLR;
 -(void) msgSend_enableLogging;
 -(void) msgSend_disableLogging;
--(NSString *)msgSend_addClassToWhitelist:(NSString *) className;
--(NSString *) msgSend_addMethodToWhitelist:(NSString *)methodName forClass:(NSString *)className;
--(NSString *) _msgSend_addMethodToWhitelist:(NSString *)methodName forClass:(NSString *)className ofType:(struct interestingCall *)call;
--(NSString *) msgSend_addAppClassesToWhitelist;
--(NSString *) msgSend_releaseBreakpointForMethod:(NSString *)methodName inClass:(NSString *)className;
--(NSString *) msgSend_clearWhitelist;
-+(BOOL)isClassFromApp:(NSString *)className;
+-(void) setClassWhitelist:(ClassMap_t *)classMap;
+-(void *(*)(id, SEL, ...)) swizzleSelector:(SEL)originalSelector withFunction:(IMP)function forClass:(id)cls isInstanceMethod:(BOOL)isInstance;
+-(void) saveState;
+-(void) loadState;
+-(void) sendToElasticsearch:(NSDictionary *)dict withService:(NSString *)svc;
+-(bool) classDumpToElasticsearch;
 @end
 
 

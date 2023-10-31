@@ -1,0 +1,376 @@
+<!-- 
+	This is used to display line items in the objc event log window.
+-->
+<script id="objcEvent" type="text/x-handlebars-template">
+	<div class="event-row">
+		<code class="language-objc objcEvent">
+	{{{indentMarkup}}}{{callTypeSymbol}}[ <span class="objcClass class-link" data-className="class_{{class}}">{{class}}</span> {{{renderedMethod}}} ]
+		</code>
+	</div>
+</script>
+
+<!--
+	This is used to display full details about an objc event when the event is clicked in the main objc panel.
+-->
+<script id="objcEventDetail" type="text/x-handlebars-template">
+	<div class="container-fluid objc-event-detail-container">
+		<!--
+		<div class="row">
+			<code class="language-objc objcEvent">
+	{{{indentMarkup}}}{{callTypeSymbol}}[ <span class="objcClass class-link">{{class}}</span> <span class="objcMethod">{{{method}}}</span> ]
+			</code>
+		</div>
+		-->
+		<div class="row">
+			<div class="objc-header">Call #</div>
+		</div>
+		<div class="row">
+			<div class="objc-detail">{{count}}</div>
+		</div>
+		<div class="row">
+			<div class="objc-header">Object Address</div>
+		</div>
+		<div class="row">
+			<div class="objc-detail"><span class="object-link">{{objectAddr}}</span></div>
+		</div>
+		<div class="row">
+			<div class="objc-header">Class</div>
+		</div>
+		<div class="row">
+			<div class="objc-detail"><span class="class-link">{{class}}</span></div>
+		</div>
+		<div class="row">
+			<div class="objc-header">Selector</span></div>
+		</div>
+		<div class="row">
+			<div class="objc-detail">{{method}}</div>
+		</div>
+		<div class="row">
+			<div class="objc-header">Arguments</div>
+		</div>
+		{{#argArray}}
+		<div class="row">
+			<div class="objc-detail-arg">{{name}}:</div>
+			<div class="objc-detail-val"><span class="objcType">({{type}})</span><span class="objcValue">{{value}}</span>{{#if argAddress}} @ <span class="object-link">{{argAddress}}</span>{{/if}}</div>
+		</div>
+		{{/argArray}}
+		<div class="row">
+			<div class="objc-header">Thread ID</div>
+		</div>
+		<div class="row">
+			<div class="objc-detail">{{thread}}</div>
+		</div>
+		{{#if returnValue.type}}
+		<div class="row">
+			<div class="objc-header">Return Value</div>
+		</div>
+		<div class="row">
+			<div class="objc-detail"><span class="objcType">({{returnValue.type}})</span><span class="objcValue">{{returnValue.value}}</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="objc-header">Return Value Address</div>
+		</div>
+		<div class="row">
+			<div class="objc-detail"><span class="object-link">{{returnValue.objectAddr}}</span></div>
+		</div>
+		{{else}}
+		<div class="row">
+			<div class="objc-header">Return Type</div>
+		</div>
+		<div class="row">
+			<div class="objc-detail">void</div>
+		</div>
+		{{/if}}
+	</div>
+</script>
+
+
+<!--
+	This is used to display full details about an objc event when the event is clicked in the Audit pane of iSpy.
+-->
+<script id="auditEventDetail" type="text/x-handlebars-template">
+	<div class="container-fluid objc-event-detail-container">
+		<div class="row">
+			<div class="objc-header">Call #</div>
+		</div>
+		<div class="row">
+			<div class="objc-detail">{{count}}</div>
+		</div>
+		<div class="row">
+			<div class="objc-header">Class</div>
+		</div>
+		<div class="row">
+			<div class="objc-detail"><span class="class-link">{{class}}</span></div>
+		</div>
+		<div class="row">
+			<div class="objc-header">Selector</span></div>
+		</div>
+		<div class="row">
+			<div class="objc-detail">{{method}}</div>
+		</div>
+		<div class="row">
+			<div class="objc-header">Arguments</div>
+		</div>
+		{{#argArray}}
+		<div class="row">
+			<div class="objc-detail-arg">{{name}}:</div>
+			<div class="objc-detail-val"><span class="objcType">(<span class="class-link">{{type}}</span>)</span><span class="objcValue">{{value}}</span></div>
+		</div>
+		{{/argArray}}
+		<div class="row">
+			<div class="objc-header">Object Address</div>
+		</div>
+		<div class="row">
+			<div class="objc-detail"><span class="object-link">{{objectAddr}}</span></div>
+		</div>
+		<div class="row">
+			<div class="objc-header">Thread ID</div>
+		</div>
+		<div class="row">
+			<div class="objc-detail">{{thread}}</div>
+		</div>
+		{{#if returnValue.type}}
+		<div class="row">
+			<div class="objc-header">Return Value</div>
+		</div>
+		<div class="row">
+			<div class="objc-detail"><span class="objcType">(<span class="class-link">{{returnValue.type}}</span>)</span><span class="objcValue">{{returnValue.value}}</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="objc-header">Return Value Address</div>
+		</div>
+		<div class="row">
+			<div class="objc-detail"><span class="object-link">{{returnValue.objectAddr}}</span></div>
+		</div>
+		{{else}}
+		<div class="row">
+			<div class="objc-header">Return Type</div>
+		</div>
+		<div class="row">
+			<div class="objc-detail class-link">void</div>
+		</div>
+		{{/if}}
+	</div>
+</script>
+
+
+
+<!--
+	This is the keychain viewing panel. It presents a list of all the items in the current keychain.
+-->
+<script id="keychainForm" type="text/x-handlebars-template">
+		<div class="ispy-keychain-detail-box nav-adjusted">
+		<ul class="nav navbar-nav" id="navbar-menu-placeholder"></ul>
+		{{#if this.notFoundContent}}
+			No entries for "{{this.notFoundContent}}".
+		{{else}}
+			{{#each this}}
+				<div class="row ispy-keychain-entry-box" data-chain-name="{{@key}}">
+				{{#each this}}
+					<div class="col-md-1">
+						<code><span class="pull-right strong">{{@key}}</span></code>
+					</div>
+					<div class="col-md-11">
+						<code>
+							{{#if_eq @key "svce" }}
+								<code class="keychain-entry keychain-editable">{{this}}</code>
+							{{/if_eq}}
+							{{#if_eq @key "v_Data" }}
+								<code class="keychain-entry keychain-editable">{{this}}</code>
+							{{/if_eq}}
+							{{#if_neq @key "svce" "v_Data"}}
+								<code class="keychain-entry">{{this}}</code>
+							{{/if_neq}}
+						</code>
+					</div>
+				{{/each}}
+					<div class="col-md-1">
+						<code><span class="strong"></span></code>
+					</div>
+					<div class="col-md-11">
+						<button class="btn btn-primary btn-xs keychain-edit-button" data-index="{{@index}}" data-chain-name="{{@key}}" type="submit">Edit</button>
+					</div>
+				</div>
+			{{/each}}
+		{{/if}}
+		</div>
+</script>
+
+<!--
+	This is the drop-down menu displayed in the navbar when viewing the Keychain pane.
+-->
+<script id="tmpl-navbar-menu-keychain" type="text/x-handlebars-template">
+	
+		<li class="dropdown" id="navbar-menu-keychain-chain">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Keychains <span class="caret"></span></a>
+			<ul class="dropdown-menu" id="tool-menu">
+				{{#each this}}
+				<li><a href="#" data-menu-item="{{@key}}">{{@key}}</a></li>
+				{{/each}}
+			</ul>
+		</li>
+	
+</script>
+
+<!-- 
+	This is the form inside the modal that pops up when editing keychain items
+-->
+<script id="tmpl-edit-keychain-form" type="text/x-handlebars-template">
+	<div class="form-group">
+		<label for="edit-keychain-service"><span class="text-black">Service</span></label>
+		<input class="form-control" id="edit-keychain-service" value="{{svce}}">
+	</div>
+	<div class="form-group">
+		<label for="edir-keychain-data"><span class="text-black">Data</span></label>
+		<textarea class="form-control" rows="4" id="edit-keychain-data">{{v_Data}}</textarea>
+	</div>
+</script>
+
+<!-- -->
+<script id="navbar-menu-objc" type="text/x-handlebars-template">
+
+</script>
+
+<!--
+	Details panel in the class browser
+-->
+<script id="class-dump-detail-panel" type="text/x-handlebars-template">
+	<pre><code id="{{propertiesDOMElement}}"></code>
+	<!-- the method list is stored in a DataTable -->
+	<code><table id="{{methodListDOMElement}}" class="table table-condensed table-hover hover" cellspacing="0">
+			<thead>
+				<tr>
+					<th>Method</th>
+				</tr>
+			</thead>
+			<tbody class="">
+			</tbody>
+		</table></code>
+	</pre>
+</script>
+
+<!-- 
+	Part of the class details panel for the class browser
+-->
+<script id="classDumpForm" type="text/x-handlebars-template"><span class="objcAtType">@interface</span> <span class="objcClass class-link">{{className}}</span>{{#if superClass}}: <span class="class-link">{{superClass}}</span>{{/if}} {{#if protocols}}&lt;{{protocols}}&gt;{{/if}}&nbsp;
+{{#if ivars}}{
+{{#each ivars}}
+	<span class="objcType class-link">{{type}}</span><span>{{name}};</span>
+	{{/each}}
+}
+{{/if}}
+{{#if properties}}
+
+{{#each properties}}
+<span class="objcAtType">@property</span> <span class="objcAttr">({{{attr}}})</span> <span class="objcType class-link">{{type}}</span> <span>{{name}};</span>
+{{/each}}
+{{/if}}
+<span class="objcAtType">@end</span></script>
+
+
+<!-- 
+	Part of the object details panel for the object browser
+-->
+<script id="objectDetailsForm" type="text/x-handlebars-template">
+	<div class="container-fluid objc-event-detail-container">
+		{{#each this}}
+		<div class="row">
+			<div class="objc-header">Instance Variable</div>
+		</div>
+		<div class="row">
+			<div class="objc-detail"><span class="objcType class-link">{{type}}</span> {{name}}</div>
+		</div>
+		<div class="row">
+			<div class="objc-header">Value</span></div>	
+		</div>
+		<div class="row">
+			<div class="objc-detail">{{value}}</div>
+		</div>
+		<br/>
+		{{/each}}
+	</div>
+</script>
+
+<!--
+<span class="objcAtType">@interface</span> <span class="objcClass">{{className}}</span>
+{{#if ivars}}{
+{{#each ivars}}
+	<span class="objcType">{{type}}</span>{{name}};
+{{/each}}
+}
+{{/if}}
+{{#if properties}}
+
+{{#each properties}}
+<span class="objcAtType">@property</span> {{{attr}}}{{name}};
+{{/each}}
+{{/if}}
+<span class="objcAtType">@end</span></script>
+-->
+
+<!-- 
+	Application overview
+-->
+<script id="dashboard-overview" type="text/x-handlebars-template">
+<div class="row">
+	<div class="objc-header">Application</div>
+	<div class="objc-detail">
+		<div id="infoSectionAppIcon"></div>
+		<div id="infoSectionAppInfo"></div>
+		
+</div>
+</script>
+
+
+<!-- 
+	Info panel icon
+-->
+<script id="dashboard-overview" type="text/x-handlebars-template">
+<img src="{{imageURI}}">
+</script>
+
+
+
+<!-- 
+	Checkboxes within the class list in the class browser
+-->
+<script id="classListCheckbox" type="text/x-handlebars-template">
+<div class="checkbox checkbox-circle checkbox-primary">
+	<input type="checkbox" id="{{checkboxID}}" class="{{checkboxActive}}">
+</div>
+</script>
+
+<!--
+	Details panel in the object/instance browser
+-->
+<script id="object-instance-detail-panel" type="text/x-handlebars-template">
+	<pre><code id="objectInstanceDetailsPane"></code>
+	<!-- the method list is stored in a DataTable -->
+	<code><table id="objectInstanceDetailsTable" class="table table-condensed table-hover hover" cellspacing="0">
+			<thead>
+				<tr>
+					<th>Method</th>
+				</tr>
+			</thead>
+			<tbody class="">
+			</tbody>
+		</table></code>
+	</pre>
+</script>
+
+
+<!-- 
+	Please wait!
+-->
+<script id="please-wait-body-working" type="text/x-handlebars-template">
+	<center><i class="fa fa-circle-o-notch fa-spin fa-5x"></i> <h4 id="please-wait-body-text">Working...</h4></center>
+</script>
+
+<!-- 
+	Please wait - all done!
+-->
+<script id="please-wait-body-ok" type="text/x-handlebars-template">
+	<center><i class="fa fa-check-square-o fa-5x green"></i> <h4 id="please-wait-body-text">Done!</h4></center>
+</script>

@@ -4,7 +4,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "CocoaHTTPServer/HTTPServer.h"
+#import "CocoaHTTPServer/Core/HTTPServer.h"
 
 
 @interface iSpyHTTPServer : HTTPServer

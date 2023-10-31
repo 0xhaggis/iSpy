@@ -1,0 +1,333 @@
+[
+{ 
+    
+    "classification":"Data Storage",
+    "class":"NSManagedObjectContext", 
+    "selector":"save:", 
+    "description":"Core Data uses unencrypted SQLite databases. Sensitive information should not be stored here.", 
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSDictionary",
+    "selector":"writeToFile:atomically:",
+    "description":"Sensitive data should not be saved in this manner.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSDictionary",
+    "selector":"writeToURL:atomically:",
+    "description":"Sensitive data should not be saved in this manner.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSDictionary",
+    "selector":"dictionaryWithContentsOfFile:",
+    "description":"Check for sensitive data loaded from .plist files.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSDictionary",
+    "selector":"dictionaryWithContentsOfURL:",
+    "description":"Check for sensitive data loaded from URLss.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSDictionary",
+    "selector":"initWithContentsOfFile:",
+    "description":"Check for sensitive data loaded from .plist files.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSDictionary",
+    "selector":"initWithContentsOfURL:",
+    "description":"Check for sensitive data loaded from .plist files.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSData",
+    "selector":"writeToFile:options:error:",
+    "description":"Sensitive data should not be saved in this manner.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSData",
+    "selector":"writeToFile:atomically:",
+    "description":"Sensitive data should not be saved in this manner.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSData",
+    "selector":"writeToURL:options:error:",
+    "description":"Sensitive data should not be saved in this manner.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSData",
+    "selector":"writeToURL:atomically:",
+    "description":"Sensitive data should not be saved in this manner.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSArray",
+    "selector":"writeToURL:atomically:",
+    "description":"Sensitive data should not be saved in this manner.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSArray",
+    "selector":"arrayWithContentsOfFile:",
+    "description":"Check for sensitive data loaded from files.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSArray",
+    "selector":"arrayWithContentsOfURL:",
+    "description":"Check for sensitive data loaded from files.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSArray",
+    "selector":"initWithContentsOfFile:",
+    "description":"Check for sensitive data loaded from files.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSArray",
+    "selector":"initWithContentsOfURL:",
+    "description":"Check for sensitive data loaded from files.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSArray",
+    "selector":"writeToFile:atomically:",
+    "description":"Sensitive data should not be saved in this manner.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSFileWrapper",
+    "selector":"writeToFile:atomically:updateFilenames:",
+    "description":"Sensitive data should not be saved in this manner.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSFileWrapper",
+    "selector":"writeToURL:options:originalContentsURL:error:",
+    "description":"Sensitive data should not be saved in this manner.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSString",
+    "selector":"writeToFile:atomically:encoding:error:",
+    "description":"Sensitive data should not be saved in this manner.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSString",
+    "selector":"writeToFile:atomically:",
+    "description":"Sensitive data should not be saved in this manner.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSString",
+    "selector":"writeToURL:atomically:encoding:error:",
+    "description":"Sensitive data should not be saved in this manner.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSString",
+    "selector":"writeToURL:atomically:",
+    "description":"Sensitive data should not be saved in this manner.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"PDFDocument",
+    "selector":"writeToURL:",
+    "description":"Sensitive data should not be saved in this manner.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSUserDefaults",
+    "selector":"setPersistentDomain:forName:",
+    "description":"Sensitive data should not be saved using NSUserDefaults.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSUserDefaults",
+    "selector":"synchronize",
+    "description":"Sensitive data should not be saved using NSUserDefaults.",
+    "risk":"Medium",
+    "callback":"audit_synchronize"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSKeyedArchiver",
+    "selector":"archiveRootObject:toFile:",
+    "description":"Sensitive data should not be saved using NSKeyedArchiver.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSKeyedArchiver",
+    "selector":"initForWritingWithMutableData:",
+    "description":"Sensitive data should not be saved using NSKeyedArchiver.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSURLCache",
+    "selector":"initWithMemoryCapacity:diskCapacity:diskPath:",
+    "description":"Sensitive SSL-encrypted data may be stored in the clear using NSURLCache.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSURLCache",
+    "selector":"storeCachedResponse:forRequest:",
+    "description":"Sensitive SSL-encrypted data may be stored in the clear using NSURLCache.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSURLCache",
+    "selector":"setDiskCapacity:",
+    "description":"Sensitive SSL-encrypted data may be stored in the clear using NSURLCache.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSData",
+    "selector":"initWithContentsOfFile:options:error:",
+    "description":"Check for sensitive data loaded from files.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSData",
+    "selector":"initWithContentsOfURL:",
+    "description":"Check for sensitive data loaded from URLs.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSData",
+    "selector":"dataWithContentsOfFile:",
+    "description":"Check for sensitive data loaded from files.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSData",
+    "selector":"dataWithContentsOfFile:options:error:",
+    "description":"Check for sensitive data loaded from files.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSData",
+    "selector":"dataWithContentsOfURL:",
+    "description":"Check for sensitive data loaded from URLs.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSData",
+    "selector":"dataWithContentsOfURL:options:error:",
+    "description":"Check for sensitive data loaded from URLs.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSData",
+    "selector":"initWithContentsOfFile:",
+    "description":"Check for sensitive data loaded from URLs.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSData",
+    "selector":"initWithContentsOfURL:options:error:",
+    "description":"Check for sensitive data loaded from URLs.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSString",
+    "selector":"initWithContentsOfFile:encoding:error:",
+    "description":"Check for sensitive data loaded from files.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSString",
+    "selector":"initWithContentsOfFile:usedEncoding:error:",
+    "description":"Check for sensitive data loaded from files.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSString",
+    "selector":"initWithContentsOfURL:encoding:error:",
+    "description":"Check for sensitive data loaded from URLs.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSString",
+    "selector":"initWithContentsOfURL:usedEncoding:error:",
+    "description":"Check for sensitive data loaded from URLs.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSString",
+    "selector":"stringWithContentsOfFile:encoding:error:",
+    "description":"Check for sensitive data loaded from files.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSString",
+    "selector":"stringWithContentsOfURL:encoding:error:",
+    "description":"Check for sensitive data loaded from files.",
+    "risk":"Medium"
+},
+{
+    "classification":"Data Storage",
+    "class":"NSString",
+    "selector":"stringWithContentsOfFile:usedEncoding:error:",
+    "description":"Check for sensitive data loaded from URLs.",
+    "risk":"Medium"
+},
+{
+    "classification":"WebView JavaScript Security",
+    "class":"UIWebView",
+    "selector":"stringByEvaluatingJavaScriptFromString:",
+    "description":"Check for sensitive data loaded from URLs.",
+    "risk":"Medium"
+}
+]

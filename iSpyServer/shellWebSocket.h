@@ -1,8 +1,8 @@
 #import <Foundation/Foundation.h>
 
-#import "CocoaHTTPServer/WebSocket.h"
+#import "CocoaHTTPServer/Core/WebSocket.h"
 #import "../iSpy.common.h"
-#import "../iSpy.rpc.h"
+#import "RPCHandler.h"
 
 @interface ShellWebSocket : WebSocket
 {

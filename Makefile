@@ -1,36 +1,64 @@
-GO_EASY_ON_ME=1
-__THEOS_TARGET_ARG_1 = clang
+DYLIB_NAME=iSpy.dylib
+DYLIB_NAME32=iSpy32.dylib
+DYLIB_NAME64=iSpy64.dylib
 
-include theos/makefiles/common.mk
+ISPY_SRC=iSpy.mm iSpy.custom.mm iSpy.class.mm iSpy.instance.mm iSpy.msgSend.watchlist.mm iSpy.msgSend.mm 3rd-party/typestring.mm iSpy.logwriter.mm iSpy.SSLPinning.mm iSpyServer/RPCHandler.mm iSpyServer/iSpyServer.mm iSpyServer/iSpyHTTPServer.mm iSpyServer/iSpyHTTPConnection.mm iSpyServer/iSpyWebSocket.mm iSpyServer/shellWebSocket.mm iSpyServer/iSpyStaticFileResponse.mm iSpyServer/iSpyHTTPServer.mm iSpyServer/iSpyStaticFileResponse.mm iSpy.blacklist.mm iSpy.FloatingButtonWindow.mm iSpy.HoverButton.mm
+FISHHOOK_SRC=3rd-party/fishhook/fishhook.c
+MINIZIP_SRC=3rd-party/SSZipArchive/minizip/ioapi.c 3rd-party/SSZipArchive/minizip/mztools.c 3rd-party/SSZipArchive/minizip/unzip.c 3rd-party/SSZipArchive/minizip/zip.c
+SSZIPARCHIVE_SRC=3rd-party/SSZipArchive/SSZipArchive.m
+#WEBROOT_SRC=$(shell ./packWebRootIntoDylib.sh)
+WEBROOT_SRC=webroot.c
+OBJS=$(addsuffix .o,$(basename $(FISHHOOK_SRC))) \
+	$(addsuffix .o,$(basename $(MINIZIP_SRC))) \
+	$(addsuffix .o,$(basename $(SSZIPARCHIVE_SRC))) \
+	$(addsuffix .o,$(basename $(WEBROOT_SRC))) \
+	$(addsuffix .o,$(basename $(ISPY_SRC)))
 
-CFLAGS+=  -mno-thumb -O0 -fno-exceptions -fno-rtti -fno-common -ffast-math -fno-threadsafe-statics -Wno-deprecated-objc-isa-usage -Wno-deprecated-declarations -Wno-address-of-temporary
-LDFLAGS+= -framework CFNetwork -framework Security -framework CoreGraphics -lsqlite3 -lxml2 libs/CocoaHTTPServer.a -F. -framework Cycript -framework JavaScriptCore
+SDK=iphoneos
+SDK_PATH=$(shell xcrun --sdk $(SDK) --show-sdk-path)
+
+CC=$(shell xcrun --sdk $(SDK) --find clang)
+CXX=$(shell xcrun --sdk $(SDK) --find clang++)
+LD=$(CXX)
+#INCLUDES=-I $(SDK_PATH)/usr/include -I 3rd-party/SSZipArchive -I 3rd-party/SSZipArchive/minizip -I /usr/local/Cellar/openssl/1.0.2n/include/
+INCLUDES=-I $(SDK_PATH)/usr/include -I 3rd-party/SSZipArchive -I 3rd-party/SSZipArchive/minizip -I /usr/local/opt/openssl/include/
+#ARCHS=-arch armv7
+ARCHS=-arch arm64
+
+IOS_FLAGS=-isysroot $(SDK_PATH) -miphoneos-version-min=8.0
+CFLAGS=$(IOS_FLAGS) -g $(ARCHS) $(INCLUDES) -Wdeprecated-declarations
+CXXFLAGS=$(IOS_FLAGS) -g $(ARCHS) $(INCLUDES) -stdlib=libc++ -std=c++11 -Wdeprecated-declarations
+
+FRAMEWORKS=-framework Foundation -framework JavaScriptCore -framework UIKit -framework Security -framework CFNetwork -framework CoreGraphics -F . -F 3rd-party
+LIBS=-lobjc -L$(SDK_PATH)/usr/lib $(SDK_PATH)/usr/lib/libc++.tbd libs/CocoaHTTPServer.a -lsqlite3 -lxml2 -lz
+LDFLAGS=$(IOS_FLAGS) $(ARCHS) $(FRAMEWORKS) $(LIBS) -shared -current_version 1.0 -compatibility_version 1.0 -all_load -ObjC
+MAKE=/usr/bin/make
 
 
-TWEAK_NAME = iSpy
-iSpy_FILES = \
-	Tweak.xm \
-	iSpy.logwriter.xm \
-	iSpy.substrate.xm \
-	iSpy.msgSend.xm \
-	iSpy.msgSend_stret.xm \
-	hooks_C_system_calls.xm \
-	hooks_CoreFoundation.xm \
-	iSpy.instance.xm \
-	iSpy.class.xm \
-	iSpy.web.xm \
-	typestring.xm \
-	iSpy.msgSend.whitelist.xm \
-	iSpy.msgSend.common.xm \
-	iSpy.rpc.xm \
-	iSpyServer/iSpyHTTPServer.xm \
-	iSpyServer/iSpyHTTPConnection.xm \
-	iSpyServer/iSpyWebSocket.xm \
-	iSpyServer/shellWebSocket.xm \
-	iSpyServer/iSpyStaticFileResponse.xm
+all: $(DYLIB_NAME)
 
+$(DYLIB_NAME): $(OBJS)
+	$(LD) $(LDFLAGS) $^ -o $@
 
-iSpy_FRAMEWORKS = UIKit MobileCoreServices
+%.o: %.mm $(DEPS)
+	$(CXX) -c $(CXXFLAGS) $< -o $@
 
-include $(THEOS_MAKE_PATH)/tweak.mk
+%.o: %.c $(DEPS)
+	$(CC) -c $(CFLAGS) $< -o $@
 
+webroot.o: webroot.c
+
+deb:
+	ldid -S $(DYLIB_NAME)
+	cp $(DYLIB_NAME) layout/Library/MobileSubstrate/DynamicLibraries/
+	cp iSpy.plist layout/Library/MobileSubstrate/DynamicLibraries/
+	dpkg-deb -Zgzip -b layout/ iSpy.deb
+
+clean:
+	rm -f __x 2>&1 > /dev/null
+	#rm -f webroot.* 2>&1 > /dev/null
+	rm -f $(OBJS) 2>&1 > /dev/null
+	rm -f $(DYLIB_NAME) 2>&1 > /dev/null
+	rm -f $(DYLIB_NAME32) 2>&1 > /dev/null
+	rm -f $(DYLIB_NAME64) 2>&1 > /dev/null
+	

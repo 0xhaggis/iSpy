@@ -1,5 +1,5 @@
 #import <Foundation/Foundation.h>
-#import "CocoaHTTPServer/HTTPFileResponse.h"
+#import "CocoaHTTPServer/Core/Responses/HTTPFileResponse.h"
 
 
 @interface iSpyStaticFileResponse : HTTPFileResponse
